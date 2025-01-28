@@ -1,0 +1,4 @@
+debugpy
+openapi-core
+requests
+Werkzeug

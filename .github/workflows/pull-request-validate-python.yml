@@ -1,0 +1,24 @@
+name: Python validation
+
+# Only run on PRs
+on:
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  validate-python:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout project code
+      - uses: actions/checkout@v4
+
+      # Set up python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      # Check and test python apps
+      - run: |
+          pip install -r requirements-test.txt
+          pylint src test
+          pytest --cov-report html --cov-report term --cov=src
