@@ -18,8 +18,7 @@ jobs:
           python-version: '3.12'
 
       # Check and test python apps
-      - working-directory: ./backend/apps/python/
-        run: |
+      - run: |
           pip install -r requirements-test.txt
           pylint src test
           python3 -m pytest --cov-report html --cov-report term --cov=src
