@@ -17,13 +17,13 @@ import logging
 from werkzeug.wrappers import Request, Response
 
 from openapi_core.contrib.werkzeug import WerkzeugOpenAPIRequest
-from .openapi import get_openapi, get_resource_from_path
-from .lambda_function_proxy_integration import (
+from src.openapi import get_openapi, get_resource_from_path
+from src.lambda_function_proxy_integration import (
     LambdaFunctionProxyIntegration,
     LambdaFunctionProxyIntegrationRequest
 )
-from .cognito import get_claim
-from .cors import OPTIONS_HEADERS
+from src.cognito import get_claim
+from src.cors import OPTIONS_HEADERS
 
 @Request.application
 def application(request: Request):

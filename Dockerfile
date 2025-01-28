@@ -2,10 +2,12 @@ FROM python:3.12
 
 WORKDIR /app
 
-COPY requirements*.txt .
+COPY requirements.txt .
 
-RUN pip install -r requirements-test.txt
+RUN pip install -r requirements.txt
 
-COPY . .
+COPY entrypoint.sh /usr/local/bin/
 
-CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "src.main"]
+COPY src src
+
+CMD ["entrypoint.sh"]
