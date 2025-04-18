@@ -9,6 +9,7 @@ https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy
 from base64 import urlsafe_b64decode
 from dataclasses import dataclass
 import logging
+import os
 import requests
 
 @dataclass
@@ -147,10 +148,20 @@ class LambdaFunctionProxyIntegration:
         logging.debug('Sending payload to lambda function')
         logging.debug(payload)
 
+        # Prepare upstream Lambda URL
+        lambda_hostname = os.environ.get('LAMBDA_HOSTNAME', 'rest-api-lambda')
+        lambda_port = os.environ.get('LAMBDA_PORT', 8080)
+        base_url = f'http://{lambda_hostname}:{lambda_port}'
+
+        lambda_version = os.environ.get('LAMBDA_VERSION', '2015-03-31')
+        url = f'{base_url}/{lambda_version}/functions/function/invocations'
+        logging.debug('Using lambda URL: %s', url)
+
         response = None
+
         try:
             response = requests.post(
-                url='http://rest-api-lambda:8080/2015-03-31/functions/function/invocations',
+                url=url,
                 json=payload,
                 timeout=5
             )
