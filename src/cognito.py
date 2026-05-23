@@ -24,19 +24,23 @@ TOKENS: dict[str, Claim] = {
     )
 }
 
-def get_claim(headers: dict) -> Claim | None:
+
+def get_claim(headers: dict[str, str]) -> Claim | None:
     """
     Given headers, decide whether a token should be used to look up an authorization claim
     or if instead claim is just passed through to the lambda.
     """
 
     token = headers.get('Authorization')
+    groups = headers.get('X-Cognito-Groups')
 
     if token is not None:
         token_clean = str(token).replace('Bearer ', '')
         if token_clean in TOKENS:
             logging.debug('Matched claim token to subject %s', TOKENS[token_clean].sub)
-            return asdict(TOKENS[token_clean])
+            output = asdict(TOKENS[token_clean])
+            output['cognito:groups'] = groups
+            return output
 
         logging.debug('No matching claim for token')
         return None
@@ -44,7 +48,6 @@ def get_claim(headers: dict) -> Claim | None:
     # Otherwise, use subject and email to build a claim
     subject = headers.get('X-Cognito-Subject')
     email = headers.get('X-Cognito-Email')
-    groups = headers.get('X-Cognito-Groups')
 
     if subject and email:
         return {
